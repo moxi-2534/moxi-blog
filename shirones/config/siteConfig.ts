@@ -42,7 +42,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	// 默认页面背景模式："banner" 使用壁纸横幅，"none" 使用主题纯色。
 	// 访客在“显示设置”中的选择会保存在浏览器中，并覆盖这里的默认值。
 	wallpaperMode: {
-		defaultMode: "banner",
+		defaultMode: "none",
 	},
 	// 页面背景纹理系统配置（5 大精美预设 + 零开销 HCT 动态取色）
 	texture: {
@@ -69,7 +69,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		},
 		homeText: {
 			// 仅在首页 Banner 中显示，标题与副标题会上下居中排列。
-			enable: true,
+			enable: false,
 			title: "Shirone",
 			subtitle: [
 				"特別なことはないけど、君がいると十分です",
@@ -121,7 +121,8 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	},
 	favicon: [
 		// 浏览器标签页图标，路径相对于 public 目录。
-		{ src: "/logo/icon.webp" },
+		{ src: "/favicon/icon-32.png", sizes: "32x32" },
+		{ src: "/favicon/icon-180.png", sizes: "180x180" },
 	],
 });
 
