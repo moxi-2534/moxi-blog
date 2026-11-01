@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	displaySettings: {
 		colorStyle: true, // 是否展示配色风格 9 宫格
 		colorSpec: true, // 是否展示 Color Spec 调色规范切换
-		wallpaperMode: true, // 是否展示页面背景（纯色/横幅）切换
+		wallpaperMode: false, // 是否展示页面背景（纯色/横幅）切换
 		layoutMode: true, // 是否展示文章列表布局（列表/网格）切换
 		reduceMotion: true, // 是否展示减少动效切换
 		texture: true, // 是否展示背景纹理选择
