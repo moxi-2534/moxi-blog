@@ -1,0 +1,13 @@
+diff --git a/index.js b/index.js
+index 19f91282f0a0e8090c97d294e6bfa1da5b147926..0f27d09c838b6bcb3be89ef86bc5c6be8048372c 100644
+--- a/index.js
++++ b/index.js
+@@ -1330,7 +1330,7 @@ ${orphans.map((file) => `  - ${file}`).join("\n")}
+       },
+       "astro:build:done": async ({ dir, logger }) => {
+         if (options.pagefind === false || paths.isThemeRepo) return;
+-        const outDir = dir.pathname;
++        const outDir = fileURLToPath(dir);
+         try {
+           const pagefind = await import("pagefind");
+           const { index } = await pagefind.createIndex({});

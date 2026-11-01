@@ -1,0 +1,10 @@
+# Lets these dependencies run their install scripts.
+# sharp powers Astro's image optimisation and will not work without it.
+allowBuilds:
+  esbuild: true
+  sharp: true
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+patchedDependencies:
+  shirones@0.1.5: patches/shirones@0.1.5.patch
