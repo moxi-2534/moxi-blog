@@ -18,7 +18,7 @@ Get-Content $envFile | ForEach-Object {
 	$config[$line.Substring(0, $i).Trim()] = $line.Substring($i + 1).Trim().Trim('"').Trim("'")
 }
 
-foreach ($key in @("DEPLOY_HOST", "DEPLOY_USER", "DEPLOY_PATH")) {
+foreach ($key in @("DEPLOY_HOST", "DEPLOY_USER", "DEPLOY_PATH", "DEPLOY_SSH_KEY")) {
 	if (-not $config.ContainsKey($key) -or -not $config[$key]) { throw "deploy/.env 缺少 $key" }
 }
 
@@ -28,10 +28,8 @@ $target = "$($config['DEPLOY_USER'])@$($config['DEPLOY_HOST'])"
 $webRoot = $config["DEPLOY_PATH"]
 $tarball = Join-Path $env:TEMP "blog-dist.tgz"
 
-$sshArgs = @("-p", $port)
-if ($config["DEPLOY_SSH_KEY"]) { $sshArgs += @("-i", $config["DEPLOY_SSH_KEY"]) }
-$scpArgs = @("-P", $port)
-if ($config["DEPLOY_SSH_KEY"]) { $scpArgs += @("-i", $config["DEPLOY_SSH_KEY"]) }
+$sshArgs = @("-p", $port, "-i", $config["DEPLOY_SSH_KEY"])
+$scpArgs = @("-P", $port, "-i", $config["DEPLOY_SSH_KEY"])
 
 Write-Host "==> build" -ForegroundColor Cyan
 pnpm build
