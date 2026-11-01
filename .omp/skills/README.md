@@ -1,12 +1,12 @@
 # Shirone AI Skills
 
-本目录是 Shirone AI skills 的唯一源目录,存放 [Agent Skills](https://agentskills.io) 格式的技能包(`SKILL.md` + YAML frontmatter)。支持该标准的 AI 编码助手(Claude Code、Codex 等)在克隆本仓库后会自动发现并按任务触发,无需额外配置。
+本目录存放 [Agent Skills](https://agentskills.io) 格式的技能包(`SKILL.md` + YAML frontmatter),位置遵循 omp 的项目级约定(`<项目>/.omp/skills/`),omp 在会话启动时自动发现并按任务触发。
 
 ## 自动发现与仓库适配
 
-保持 `.agents/skills/<skill-name>/SKILL.md` 结构即可被支持 Agent Skills 标准的助手自动发现,无需额外配置。
+保持 `.omp/skills/<skill-name>/SKILL.md` 结构即可被 omp 自动发现,无需额外配置;每个技能是独立目录,`SKILL.md` 带 `name` 与 `description`。
 
-**本仓库是 npm 包模式**(`shirones@0.1.5`),本目录从上游主题仓库 `LyraVoid/Shirone` 的 `.agents/skills/` 同步而来,并做了以下路径适配:
+**本仓库是 npm 包模式**(`shirones@0.1.5`),本目录从上游主题仓库 `LyraVoid/Shirone` 的 `.agents/skills/` 同步而来(内容是实打实的副本,不是链接),并做了以下路径适配:
 
 | 上游主题仓库 | 本仓库 |
 | --- | --- |
@@ -23,21 +23,19 @@
 
 少数主题内部文件(如 `integration/vite/overlay.ts`、`utils/emoji-*.ts`、`utils/waline-runtime.ts`)在打包发布时被裁剪,`node_modules/shirones/` 里没有,需要时去上游仓库读。
 
-上游的 `pnpm check:manifest`、`pnpm skills:package` 等命令在本仓库**不存在**(由主题的打包流水线负责)。新增或修改技能时直接编辑 `.agents/skills/<name>/SKILL.md`,并在提交信息里注明同步自上游哪个提交。
+上游的 `pnpm check:manifest`、`pnpm skills:package` 等命令在本仓库**不存在**(由主题的打包流水线负责)。新增或修改技能时直接编辑 `.omp/skills/<name>/SKILL.md`,并在提交信息里注明同步自上游哪个提交。
 
 同步注意:更新技能时保留本 README 的适配表,不要在技能正文里重新写回 `src/config/`、`src/content/`、`src/data/` 这类上游路径。
 
 **开发者向技能**(`shirone-component-dev`、`shirone-dev-workflow`、`shirone-feature`、`shirone-i18n`、`shirone-markdown-dev`、`shirone-sidebar`、`shirone-context-menu`)描述的是**修改主题源码**的流程,其中的 `pnpm check:manifest`、`pnpm design:lint`、Playwright 分片等命令只在上游主题仓库可用。在本仓库要改主题行为时,只能通过覆盖目录(`src/components/`、`src/layouts/`)或 pnpm patch 实现,不要直接改 `node_modules/`。
 
-## 给 omp 用的项目级入口
+## 生效方式
 
-Claude Code / Codex 直接读 `.agents/skills/`;omp 只扫描启动时的 `<项目>/.omp/skills/`,因此这里用**目录联接**指向本目录,避免第二份副本(`.omp/` 已列入 `.gitignore`):
+omp 在**会话启动时**扫描 `<项目>/.omp/skills/`,因此改完技能后重开一个会话才生效;之后可用 `read skill://shirone-writing` 或 `/skill:shirone-writing` 调用,`omp skills list` 可随时核对已发现的技能。
 
-```powershell
-cmd /c mklink /J .omp\skills .agents\skills
-```
+本目录是实体文件并纳入版本控制,克隆即用,无需任何链接或额外命令。
 
-新建的克隆需要重跑这一行,之后 `omp skills list` 就能看到 `shirone-writing` 等技能。
+Claude Code / Codex 默认只读 `.agents/skills/`、`.claude/skills/` 等路径;如果还要给它们用,自行建一份链接(例如 `cmd /c mklink /J .agents\skills .omp\skills`)。
 
 ## 定位
 
@@ -45,7 +43,7 @@ cmd /c mklink /J .omp\skills .agents\skills
 
 1. `AGENTS.md`(根 + 嵌套)——总纲与目录级附加规则;
 2. `rules/` 与 `docs/`——硬性规则与权威规范,skills 只负责把"做某类任务该读哪些文档、守哪些红线、跑哪些命令"收敛成入口;
-3. `.agents/skills/`——按任务触发的技能包,正文保持精简,细节一律委托给下层文档。
+3. `.omp/skills/`——按任务触发的技能包,正文保持精简,细节一律委托给下层文档。
 
 ## 技能清单
 
@@ -77,4 +75,4 @@ cmd /c mklink /J .omp\skills .agents\skills
 - **命名**:目录名与 frontmatter `name` 一致,统一使用 `shirone-` 前缀——仓库已有面向访客的"技能展示页"(`node_modules/shirones/src/pages/skills.astro`)占用 `skills` 一词,前缀避免歧义,也保证多仓库场景下不与其他项目的技能冲突。
 - **语言**:frontmatter 的 `name`/`description` 用英文(`description` 面向触发匹配),正文用中文。
 - **单一真源**:技能正文不得复制 `rules/`/`docs/` 的具体规范,只写摘要与路径;正文与文档清单中引用的仓库路径由 `scripts/check-skills.mjs`(`pnpm check:manifest` 的一部分)校验真实存在,防止文档移动后技能漂移。
-- **新增技能**:创建 `<name>/SKILL.md` 后运行 `pnpm.cmd check:manifest` 验证。
+- **新增技能**:创建 `<name>/SKILL.md`(带 `name`/`description`)后重开会话,用 `omp skills list` 核对是否被发现。
