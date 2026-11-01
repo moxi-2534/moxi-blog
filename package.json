@@ -8,7 +8,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "new-posts": "node scripts/new-post.mjs",
+    "new-post": "node scripts/new-post.mjs",
     "astro": "astro"
   },
   "dependencies": {

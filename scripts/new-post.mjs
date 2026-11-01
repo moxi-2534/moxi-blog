@@ -1,17 +1,28 @@
-// 新建文章：pnpm new-posts <名字>
+// 新建文章：pnpm new-post <名字>
 // 生成 shirones/content/posts/<名字>/index.md（文件夹形式，便于同目录放封面图）
 // 访问地址：/posts/<名字>/
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 
 const POSTS_DIR = join("shirones", "content", "posts");
-const TIME_ZONE = "Asia/Shanghai"; // 与 shirones/config/siteConfig.ts 的 timeZone 保持一致
+const SITE_CONFIG = join("shirones", "config", "siteConfig.ts");
+const DEFAULT_TZ = "Asia/Shanghai";
+
+/** 时区优先级：SHIRONE_TZ > shirones/config/siteConfig.ts > 默认值 */
+function resolveTimeZone() {
+	if (process.env.SHIRONE_TZ) return process.env.SHIRONE_TZ;
+	if (existsSync(SITE_CONFIG)) {
+		const m = readFileSync(SITE_CONFIG, "utf8").match(/\btimeZone:\s*["'`]([^"'`]+)["'`]/);
+		if (m) return m[1];
+	}
+	return DEFAULT_TZ;
+}
 
 const args = process.argv.slice(2).filter((a) => a !== "--");
 if (args.length === 0) {
-	console.error(`用法: pnpm new-posts <名字>
-例:   pnpm new-posts hello-world        -> posts/hello-world/index.md
-      pnpm new-posts notes/first-post   -> posts/notes/first-post/index.md`);
+	console.error(`用法: pnpm new-post <名字>
+例:   pnpm new-post hello-world        -> posts/hello-world/index.md
+      pnpm new-post notes/first-post   -> posts/notes/first-post/index.md`);
 	process.exit(1);
 }
 
@@ -32,23 +43,31 @@ if (existsSync(fullPath) || existsSync(legacyPath)) {
 	process.exit(1);
 }
 
+const timeZone = resolveTimeZone();
+let parts;
+try {
+	parts = Object.fromEntries(
+		new Intl.DateTimeFormat("en-CA", {
+			timeZone,
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			hour12: false,
+		})
+			.formatToParts(new Date())
+			.map((p) => [p.type, p.value]),
+	);
+} catch {
+	console.error(`时区无效: "${timeZone}"（改 shirones/config/siteConfig.ts 的 timeZone，或设 SHIRONE_TZ）`);
+	process.exit(1);
+}
+
 const now = new Date();
-const parts = Object.fromEntries(
-	new Intl.DateTimeFormat("en-CA", {
-		timeZone: TIME_ZONE,
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-		hour: "2-digit",
-		minute: "2-digit",
-		second: "2-digit",
-		hour12: false,
-	})
-		.formatToParts(now)
-		.map((p) => [p.type, p.value]),
-);
 const offset =
-	new Intl.DateTimeFormat("en-US", { timeZone: TIME_ZONE, timeZoneName: "longOffset" })
+	new Intl.DateTimeFormat("en-US", { timeZone, timeZoneName: "longOffset" })
 		.formatToParts(now)
 		.find((p) => p.type === "timeZoneName")?.value.replace("GMT", "") || "+00:00";
 const date = `${parts.year}-${parts.month}-${parts.day}`;
@@ -62,6 +81,7 @@ image: ''
 tags: []
 category: ''
 draft: true
+lang: ''
 ---
 
 `;
@@ -70,4 +90,4 @@ mkdirSync(dir, { recursive: true });
 writeFileSync(fullPath, content, "utf8");
 console.log(`已创建: ${fullPath}`);
 console.log(`访问地址: /posts/${name}/`);
-console.log("draft: true —— 写完改成 false 才会出现在站点上。");
+console.log(`draft: true —— 写完改成 false 才会出现在站点上（时区 ${timeZone}）。`);
