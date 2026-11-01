@@ -76,3 +76,6 @@ artifacts/shirone-ai-*
 # shirones integration cache
 .shirones/
 .shirones-backup/
+
+# omp 项目级 skills：junction 指向 .agents/skills，避免同一份技能提交两次
+.omp/

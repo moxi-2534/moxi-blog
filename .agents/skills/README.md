@@ -29,6 +29,16 @@
 
 **开发者向技能**(`shirone-component-dev`、`shirone-dev-workflow`、`shirone-feature`、`shirone-i18n`、`shirone-markdown-dev`、`shirone-sidebar`、`shirone-context-menu`)描述的是**修改主题源码**的流程,其中的 `pnpm check:manifest`、`pnpm design:lint`、Playwright 分片等命令只在上游主题仓库可用。在本仓库要改主题行为时,只能通过覆盖目录(`src/components/`、`src/layouts/`)或 pnpm patch 实现,不要直接改 `node_modules/`。
 
+## 给 omp 用的项目级入口
+
+Claude Code / Codex 直接读 `.agents/skills/`;omp 只扫描启动时的 `<项目>/.omp/skills/`,因此这里用**目录联接**指向本目录,避免第二份副本(`.omp/` 已列入 `.gitignore`):
+
+```powershell
+cmd /c mklink /J .omp\skills .agents\skills
+```
+
+新建的克隆需要重跑这一行,之后 `omp skills list` 就能看到 `shirone-writing` 等技能。
+
 ## 定位
 
 仓库的指导体系分三层,**skills 是任务化入口层,不重复任何下层内容**:
