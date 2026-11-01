@@ -1,13 +1,13 @@
-# blog.moxi2534.com —— Nginx 站点配置
-# 用法：复制到 /etc/nginx/conf.d/blog.moxi2534.com.conf，然后 nginx -t && systemctl reload nginx
-# HTTPS 用 `certbot --nginx -d blog.moxi2534.com --redirect` 自动补全。
+# Nginx 站点配置模板 —— 由 deploy/publish.ps1 渲染后上传（占位符 __SERVER_NAME__ / __WEB_ROOT__）
+# 手动安装：渲染后放到 /etc/nginx/conf.d/，再 `nginx -t && systemctl reload nginx`
+# HTTPS 交给 certbot：`certbot --nginx -d <你的域名> --redirect`
 
 server {
     listen 80;
     listen [::]:80;
-    server_name blog.moxi2534.com;
+    server_name __SERVER_NAME__;
 
-    root /var/www/blog;
+    root __WEB_ROOT__;
     index index.html;
     charset utf-8;
 
