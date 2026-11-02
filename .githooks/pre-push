@@ -1,0 +1,11 @@
+#!/bin/sh
+# 推送到 main 时先发布；发布失败则中止推送。跳过用 git push --no-verify
+while read -r local_ref local_sha remote_ref remote_sha; do
+	case "$remote_ref" in
+	refs/heads/main)
+		echo "==> pre-push: deploying main"
+		node scripts/release.mjs || exit 1
+		;;
+	esac
+done
+exit 0
