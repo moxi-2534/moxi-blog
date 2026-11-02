@@ -14,6 +14,8 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	base: "/",
 	title: "墨兮的博客",
 	subtitle: "止于至善",
+	// 社交分享预览图（og:image / twitter:image），1200×630。
+	ogImage: "/images/og.webp",
 	// 电脑端顶栏标题与导航内容区域："left" 左对齐，"center" 居中。
 	topAppBar: {
 		contentAlign: "center",
