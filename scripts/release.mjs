@@ -43,7 +43,6 @@ const webRoot = cfg.DEPLOY_PATH;
 const sshOpts = ["-i", cfg.DEPLOY_SSH_KEY, "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=accept-new"];
 
 const tmp = mkdtempSync(join(tmpdir(), "blog-release-"));
-const tarball = join(tmp, "dist.tgz");
 
 try {
 	console.log("==> build");
@@ -55,10 +54,10 @@ try {
 	}
 
 	console.log("==> package");
-	run("tar", ["-czf", tarball, "-C", join(ROOT, "dist"), "."]);
+	run("tar", ["-czf", "dist.tgz", "-C", join(ROOT, "dist"), "."], { cwd: tmp });
 
 	console.log(`==> upload -> ${target}`);
-	run("scp", ["-P", port, ...sshOpts, tarball, `${target}:/tmp/blog-dist.tgz`]);
+	run("scp", ["-P", port, ...sshOpts, "dist.tgz", `${target}:/tmp/blog-dist.tgz`], { cwd: tmp });
 
 	console.log("==> activate");
 	run("ssh", [
@@ -91,6 +90,6 @@ function syncNginx() {
 		.replaceAll("__WEB_ROOT__", webRoot);
 	const localConf = join(tmp, "nginx.conf");
 	writeFileSync(localConf, rendered);
-	run("scp", ["-P", port, ...sshOpts, localConf, `${target}:/tmp/blog-nginx.conf`]);
+	run("scp", ["-P", port, ...sshOpts, "nginx.conf", `${target}:/tmp/blog-nginx.conf`], { cwd: tmp });
 	run("ssh", ["-p", port, ...sshOpts, target, `set -e; cp -n ${confPath} ${confPath}.bak 2>/dev/null || true; mv /tmp/blog-nginx.conf ${confPath}; nginx -t; systemctl reload nginx`]);
 }
