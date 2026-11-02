@@ -8,7 +8,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "release": "powershell -NoProfile -ExecutionPolicy Bypass -File deploy/publish.ps1",
+    "release": "node scripts/release.mjs",
     "new-post": "node scripts/new-post.mjs",
     "astro": "astro"
   },
