@@ -9,6 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "release": "node scripts/release.mjs",
+    "hooks:install": "git config core.hooksPath .githooks",
     "new-post": "node scripts/new-post.mjs",
     "astro": "astro"
   },
