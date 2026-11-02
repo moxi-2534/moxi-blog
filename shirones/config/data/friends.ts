@@ -16,38 +16,23 @@ export interface FriendItem {
 
 // 友情链接数据
 export const friendsData: FriendItem[] = [
-	{
-		id: 1,
-		title: "Mizuki",
-		imgurl: "https://avatars.githubusercontent.com/u/225602409?v=4&s=640",
-		desc: "Another Fuwari-based blog theme with docs",
-		siteurl: "https://mizuki.mysqil.com",
-		tags: ["Blog", "Theme"],
-	},
-	{
-		id: 2,
-		title: "Astro",
-		imgurl: "https://avatars.githubusercontent.com/u/44914786?v=4&s=640",
-		desc: "The web framework for content-driven websites",
-		siteurl: "https://astro.build",
-		tags: ["Framework"],
-	},
-	{
-		id: 3,
-		title: "Material 3",
-		imgurl: "https://avatars.githubusercontent.com/u/19478152?v=4&s=640",
-		desc: "Material Design 3 — the next generation of Material Design",
-		siteurl: "https://m3.material.io",
-		tags: ["Design"],
-	},
+	// 追加友链条目，字段含义见上方 FriendItem。
+	// {
+	// 	id: 1,
+	// 	title: "站点名",
+	// 	imgurl: "https://example.com/avatar.png",   // 头像/logo，建议方形
+	// 	desc: "一句话介绍",
+	// 	siteurl: "https://example.com",
+	// 	tags: ["Blog"],                              // 自动聚合成顶部筛选标签
+	// },
 ];
 
-// 获取所有友情链接数据（稳定顺序，测试可复现）
+// 获取所有友情链接数据（稳定顺序）
 export function getFriendsList(): FriendItem[] {
 	return friendsData;
 }
 
-// 获取随机排序的友情链接数据（避免固定排序，按需使用）
+// 获取随机排序的友情链接数据
 export function getShuffledFriendsList(): FriendItem[] {
 	const shuffled = [...friendsData];
 	for (let i = shuffled.length - 1; i > 0; i--) {
