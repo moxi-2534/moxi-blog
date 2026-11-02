@@ -25,6 +25,14 @@ export const friendsData: FriendItem[] = [
 	// 	siteurl: "https://example.com",
 	// 	tags: ["Blog"],                              // 自动聚合成顶部筛选标签
 	// },
+	{
+		id: 1,
+		title: "潮思",
+		imgurl: "https://chaosyn.com/favicon.svg",
+		desc: "独立开发者 Yeton 的产品与随笔",
+		siteurl: "https://chaosyn.com",
+		tags: ["个人站"],
+	},
 ];
 
 // 获取所有友情链接数据（稳定顺序）
